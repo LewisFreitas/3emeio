@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, AsyncStorage, View, Text, Alert } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
 
 export default class LinksScreen extends React.Component {
@@ -7,14 +7,47 @@ export default class LinksScreen extends React.Component {
     title: 'Links',
   };
 
-  render() {
-    return (
-      <ScrollView style={styles.container}>
-        {/* Go ahead and delete ExpoLinksView and replace it with your
-           * content, we just wanted to provide you with some helpful links */}
-        <ExpoLinksView />
-      </ScrollView>
+  constructor(props) {
+    super(props);
+    this.state = {
+      isAuthenticated : false,
+    };
+  }
+
+  componentWillMount = () => { 
+    const value = AsyncStorage.getItem('isAuthenticated', (value) => {
+        JSON.parse(value) 
+    });
+    this.setState({
+      isAuthenticated: false,
+    });
+  }
+
+  renderAuthenticated(){
+    return(
+      <View>
+        <Text>
+         Utilizador autenticado.
+        </Text>
+      </View>
     );
+  }
+
+  renderAuthenticate(){
+    return(
+      <View>
+        <Text>
+         Utilizador nunca autenticado.
+        </Text>
+      </View>
+    );
+  }
+
+  render() {
+    if (this.state.isAuthenticated) {
+      return this.renderAuthenticated();
+    }
+    return this.renderAuthenticate();
   }
 }
 
